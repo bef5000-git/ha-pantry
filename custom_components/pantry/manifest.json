@@ -1,0 +1,14 @@
+{
+  "domain": "pantry",
+  "name": "Pantry",
+  "codeowners": [
+    "@bef5000-git"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/bef5000-git/ha-pantry",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/bef5000-git/ha-pantry/issues",
+  "requirements": [],
+  "version": "2026.11.8"
+}

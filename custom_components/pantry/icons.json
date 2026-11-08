@@ -1,0 +1,12 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "online": {
+        "default": "mdi:lan-connect",
+        "state": {
+          "off": "mdi:lan-disconnect"
+        }
+      }
+    }
+  }
+}

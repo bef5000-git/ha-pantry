@@ -1,0 +1,99 @@
+# Example Home Assistant automations for Pantry's meal-prep reminders.
+#
+# Use them one of two ways:
+#   - In Home Assistant: Settings > Automations & scenes > Create automation > Create new automation,
+#     then the three-dots menu (top right) > Edit in YAML, and paste ONE automation (from "alias:" down to
+#     the next "- alias:"), without the leading "- ".
+#   - Or add them to your automations.yaml.
+#
+# Change notify.mobile_app_YOUR_PHONE to your phones (Developer tools > Actions, type "notify.mobile_app"
+# to see their names). Change the times to whatever suits you: that's the point of doing it in Home Assistant.
+#
+# What Pantry gives you (refreshed every 5 minutes):
+#   sensor.pantry_prep_today     how many prep tasks today's meals need (e.g. take the chicken out)
+#                                attribute "summary": the tasks, one per line; "tasks": the details
+#   sensor.pantry_prep_tonight   how many tasks tonight for tomorrow's meals (e.g. move the roast to the fridge)
+#   sensor.pantry_next_prep      when the next task is due, by the time set in Pantry (7:00 am / 8:00 pm unless
+#                                you gave one); attributes task, meal, slot
+#   sensor.pantry_meals_today    what's planned today
+#   calendar.pantry_meal_prep    each prep task as a 15-minute event at its Pantry time
+#   calendar.pantry_meals        each planned meal as an all-day event
+#   binary_sensor.pantry_online  off when Home Assistant can't reach Pantry (e.g. the PC is off)
+
+
+# 1. Morning: at a time you choose, today's prep, if there is any.
+- alias: "Pantry: morning meal prep"
+  triggers:
+    - trigger: time
+      at: "06:45:00"
+  conditions:
+    - condition: numeric_state
+      entity_id: sensor.pantry_prep_today
+      above: 0
+  actions:
+    - action: notify.mobile_app_YOUR_PHONE
+      data:
+        title: "Meal prep today"
+        message: "{{ state_attr('sensor.pantry_prep_today', 'summary') }}"
+        data:
+          clickAction: /pantry   # Android: tapping opens /pantry (if Pantry is in your sidebar there)
+          url: /pantry           # iPhone: the same
+
+
+# 2. Evening: prep tonight for tomorrow's meals.
+- alias: "Pantry: evening meal prep for tomorrow"
+  triggers:
+    - trigger: time
+      at: "19:30:00"
+  conditions:
+    - condition: numeric_state
+      entity_id: sensor.pantry_prep_tonight
+      above: 0
+  actions:
+    - action: notify.mobile_app_YOUR_PHONE
+      data:
+        title: "Prep tonight for tomorrow"
+        message: "{{ state_attr('sensor.pantry_prep_tonight', 'summary') }}"
+        data:
+          clickAction: /pantry
+          url: /pantry
+
+
+# 3. Each task at its own time from Pantry (e.g. "start the crock pot at 8"), 10 minutes early.
+#    Change the offset, or remove it to be reminded right on time.
+- alias: "Pantry: each prep task at its time"
+  triggers:
+    - trigger: calendar
+      event: start
+      entity_id: calendar.pantry_meal_prep
+      offset: "-0:10:00"
+  actions:
+    - action: notify.mobile_app_YOUR_PHONE
+      data:
+        title: "Meal prep: {{ trigger.calendar_event.summary }}"
+        message: "{{ trigger.calendar_event.description }}"
+        data:
+          clickAction: /pantry
+          url: /pantry
+
+
+# 4. Adding to an automation you already have (a good-morning routine, say): paste this into its
+#    actions. It does nothing on days with no prep.
+#
+#    - if:
+#        - condition: numeric_state
+#          entity_id: sensor.pantry_prep_today
+#          above: 0
+#      then:
+#        - action: notify.mobile_app_YOUR_PHONE
+#          data:
+#            title: "Meal prep today"
+#            message: "{{ state_attr('sensor.pantry_prep_today', 'summary') }}"
+#
+#    Or for a spoken reminder on a speaker, instead of the notify action:
+#        - action: tts.speak
+#          target:
+#            entity_id: tts.google_translate_en_com
+#          data:
+#            media_player_entity_id: media_player.kitchen
+#            message: "Meal prep today: {{ state_attr('sensor.pantry_prep_today', 'summary') | replace('\n', '. ') }}"

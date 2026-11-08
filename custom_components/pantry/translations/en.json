@@ -1,0 +1,82 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Pantry",
+        "description": "On the PC that runs Pantry, double-click ha-integration-token.bat in the Pantry folder. It shows the address and token to enter here.",
+        "data": {
+          "url": "Pantry address",
+          "token": "Token"
+        },
+        "data_description": {
+          "url": "Pantry on your network, e.g. http://192.168.1.50:8765 (ha-integration-token.bat shows it)",
+          "token": "From ha-integration-token.bat"
+        }
+      },
+      "reauth_confirm": {
+        "title": "New Pantry token",
+        "description": "Pantry didn't accept the saved token. Run ha-integration-token.bat on the PC and paste the token it shows.",
+        "data": {
+          "token": "Token"
+        }
+      },
+      "reconfigure": {
+        "title": "Change Pantry's address or token",
+        "data": {
+          "url": "Pantry address",
+          "token": "Token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Couldn't reach Pantry at that address. Check that the PC is on and Pantry is running, and that the address matches what ha-integration-token.bat shows.",
+      "invalid_auth": "Pantry didn't accept that token. Run ha-integration-token.bat again and copy the token it shows.",
+      "pantry_outdated": "Pantry on the PC is version {pantry_version}; this integration needs {needed} or later. Update Pantry on the PC, then try again."
+    },
+    "abort": {
+      "already_configured": "This Pantry is already set up. Its address and token were updated.",
+      "reauth_successful": "Token updated.",
+      "reconfigure_successful": "Pantry's settings were updated.",
+      "wrong_pantry": "That's a different Pantry from the one set up here. To switch, delete this one and add the new one."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "prep_today": {
+        "name": "Prep today"
+      },
+      "prep_tonight": {
+        "name": "Prep tonight"
+      },
+      "next_prep": {
+        "name": "Next prep"
+      },
+      "meals_today": {
+        "name": "Meals today"
+      }
+    },
+    "calendar": {
+      "meal_prep": {
+        "name": "Meal prep"
+      },
+      "meals": {
+        "name": "Meals"
+      }
+    },
+    "binary_sensor": {
+      "online": {
+        "name": "Online"
+      }
+    }
+  },
+  "issues": {
+    "pantry_outdated": {
+      "title": "Update Pantry on your PC",
+      "description": "Pantry on your PC is version {pantry_version}, but this Pantry integration needs {needed} or later. Some sensors may be missing or wrong until you update Pantry on the PC. This notice goes away within 5 minutes of the update."
+    },
+    "integration_outdated": {
+      "title": "Update the Pantry integration",
+      "description": "Pantry on your PC (version {pantry_version}) needs version {needed} or later of the Pantry integration; this one is {version}. Update it in HACS and restart Home Assistant. This notice goes away after that."
+    }
+  }
+}
