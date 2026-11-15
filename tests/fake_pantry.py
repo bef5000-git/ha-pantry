@@ -20,7 +20,9 @@ def state(today: date, version: str = "2026.11.08", integration_min: str | None 
     tomorrow = today + timedelta(days=1)
     meals = [
         {"plan_id": 1, "date": today.isoformat(), "slot": "breakfast", "meal": "Oatmeal", "added_by": "Sam",
-         "ingredients": "oats, milk", "prep": []},
+         "ingredients": "oats (1/2 cup), milk (1 cup)", "prep": [], "for": None},
+        {"plan_id": 4, "date": today.isoformat(), "slot": "breakfast", "meal": "French toast sticks",
+         "added_by": "Sam", "ingredients": "French toast sticks", "prep": [], "for": "Kids"},
         {"plan_id": 2, "date": today.isoformat(), "slot": "dinner", "meal": "Chicken Tacos", "added_by": "Sam",
          "ingredients": "chicken thighs, tortillas",
          "prep": [{"task": "Take the chicken out of the freezer", "when": "7:00 am"}]},

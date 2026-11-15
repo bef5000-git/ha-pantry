@@ -48,3 +48,8 @@ def task_list(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def meals_on(data: dict[str, Any], day: date) -> list[dict[str, Any]]:
     return [m for m in (data or {}).get("meals", []) if m.get("date") == day.isoformat()]
+
+
+def meal_name(m: dict[str, Any]) -> str:
+    """"Uncrustables (Kids)" when Pantry says whose meal it is, else just the meal."""
+    return f"{m['meal']} ({m['for']})" if m.get("for") else m["meal"]

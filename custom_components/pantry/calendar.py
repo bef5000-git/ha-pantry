@@ -82,6 +82,6 @@ class MealsCalendar(_PantryCalendar):
                 lines.append(f"Ingredients: {m['ingredients']}")
             lines += [f"Prep, {p['when']}: {p['task']}" for p in m.get("prep", [])]
             events.append(CalendarEvent(
-                start=day, end=day + timedelta(days=1), summary=f"{m['slot'].capitalize()}: {m['meal']}",
+                start=day, end=day + timedelta(days=1), summary=f"{m['slot'].capitalize()}{' for ' + m['for'] if m.get('for') else ''}: {m['meal']}",
                 uid=f"pantry-meal-{m['plan_id']}", description="\n".join(lines) or None))
         return events

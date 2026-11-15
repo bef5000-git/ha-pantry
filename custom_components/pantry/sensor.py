@@ -13,7 +13,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from . import PantryConfigEntry
-from .data import meals_on, next_prep, prep_today, prep_tonight, summary, task_list
+from .data import meal_name, meals_on, next_prep, prep_today, prep_tonight, summary, task_list
 from .entity import PantryEntity
 
 
@@ -101,14 +101,14 @@ class MealsTodaySensor(PantryEntity, SensorEntity):
         meals = self._meals()
         if not meals:
             return "Nothing planned"
-        text = ", ".join(f"{m['meal']} ({m['slot']})" for m in meals)
+        text = ", ".join(f"{m['meal']} ({m['slot']}{', ' + m['for'] if m.get('for') else ''})" for m in meals)
         return text if len(text) <= 255 else text[:252] + "..."
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         meals = self._meals()
-        out: dict[str, Any] = {slot: [m["meal"] for m in meals if m["slot"] == slot]
+        out: dict[str, Any] = {slot: [meal_name(m) for m in meals if m["slot"] == slot]
                                for slot in ("breakfast", "lunch", "dinner")}
-        out["meals"] = [{"meal": m["meal"], "slot": m["slot"], "ingredients": m.get("ingredients"),
-                         "prep": m.get("prep", [])} for m in meals]
+        out["meals"] = [{"meal": m["meal"], "slot": m["slot"], "for": m.get("for") or "everyone",
+                         "ingredients": m.get("ingredients"), "prep": m.get("prep", [])} for m in meals]
         return out

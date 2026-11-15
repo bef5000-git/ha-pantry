@@ -46,7 +46,10 @@ async def test_states(hass: HomeAssistant, entry):
     assert today.attributes["summary"] == "Take the chicken out of the freezer (Chicken Tacos, dinner)"
     tonight = hass.states.get("sensor.pantry_prep_tonight")
     assert tonight.state == "1" and tonight.attributes["summary"] == "Move the roast to the fridge (Pot Roast, dinner)"
-    assert hass.states.get("sensor.pantry_meals_today").state == "Oatmeal (breakfast), Chicken Tacos (dinner)"
+    meals = hass.states.get("sensor.pantry_meals_today")
+    assert meals.state == "Oatmeal (breakfast), French toast sticks (breakfast, Kids), Chicken Tacos (dinner)"
+    assert meals.attributes["breakfast"] == ["Oatmeal", "French toast sticks (Kids)"]
+    assert [m["for"] for m in meals.attributes["meals"]] == ["everyone", "Kids", "everyone"]
     nxt = hass.states.get("sensor.pantry_next_prep")
     assert nxt.attributes["device_class"] == "timestamp" and dt_util.parse_datetime(nxt.state) > dt_util.now()
     online = hass.states.get("binary_sensor.pantry_online")
@@ -65,7 +68,8 @@ async def test_calendars(hass: HomeAssistant, entry):
                                            "Start the crock pot on low"]
     assert prep[1]["description"] == "For tomorrow's dinner: Pot Roast"
     meals = resp["calendar.pantry_meals"]["events"]
-    assert [e["summary"] for e in meals] == ["Breakfast: Oatmeal", "Dinner: Chicken Tacos", "Dinner: Pot Roast"]
+    assert [e["summary"] for e in meals] == ["Breakfast: Oatmeal", "Breakfast for Kids: French toast sticks",
+                                            "Dinner: Chicken Tacos", "Dinner: Pot Roast"]
 
 
 async def test_pc_off(hass: HomeAssistant, tz, pantry):
